@@ -7,12 +7,17 @@ import {
   Body,
   Param,
 } from '@nestjs/common';
+import { CreatePostDto } from './dto/create-post.dto';
+import { PostsService } from './posts.service';
 
 @Controller('posts')
 export class PostsController {
+  constructor(private postsService: PostsService) {}
+
   @Get()
   findAll() {
-    return 'This api endpoint returns all posts';
+    console.log('This api endpoint returns all posts');
+    return this.postsService.findAll();
   }
 
   @Get(`:id`)
@@ -22,15 +27,13 @@ export class PostsController {
   }
 
   @Post()
-  createPost(@Body() body: Object) {
-    console.log(body);
-    return 'This api endpoint creates a post, provided body:';
+  createPost(@Body() createPostDto: CreatePostDto) {
+    console.log(createPostDto);
+    this.postsService.create(createPostDto);
   }
 
   @Patch(`:id`)
   updatePost(@Param('id') id: string, @Body() body: Object) {
-    console.log(`The post id: ${id}`);
-    console.log(body);
     return 'This api endpoint updates a post';
   }
 
