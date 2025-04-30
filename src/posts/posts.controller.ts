@@ -7,8 +7,9 @@ import {
   Body,
   Param,
 } from '@nestjs/common';
-import { CreatePostDto } from './dto/create-post.dto';
+import { CreatePostDto } from './dtos/create-post.dto';
 import { PostsService } from './posts.service';
+import { UpdatePostDto } from './dtos/update-post.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -17,29 +18,31 @@ export class PostsController {
   @Get()
   findAll() {
     console.log('This api endpoint returns all posts');
-    return this.postsService.findAll();
+    return this.postsService.findAllPosts();
   }
 
   @Get(`:id`)
   findOne(@Param('id') id: string) {
-    console.log(`The post id: ${id}`);
-    return 'This api endpoint returns a single post';
+    return this.postsService.getPost(parseInt(id));
   }
 
   @Post()
-  createPost(@Body() createPostDto: CreatePostDto) {
-    console.log(createPostDto);
-    this.postsService.create(createPostDto);
+  createPost(@Body() body: CreatePostDto) {
+    return this.postsService.createPost(
+      body.title,
+      body.content,
+      body.authorId,
+    );
   }
 
   @Patch(`:id`)
-  updatePost(@Param('id') id: string, @Body() body: Object) {
-    return 'This api endpoint updates a post';
+  updatePost(@Param('id') id: string, @Body() body: UpdatePostDto) {
+    return this.postsService.updatePost(parseInt(id), body);
   }
 
   @Delete(':id')
   deletePost(@Param('id') id: string) {
-    console.log(`The post id: ${id}`);
-    return 'This api endpoint deletes a post';
+    'This api endpoint deletes a post';
+    return this.postsService.deletePost(parseInt(id));
   }
 }
