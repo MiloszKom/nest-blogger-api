@@ -6,10 +6,15 @@ import {
   Delete,
   Body,
   Param,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { CreatePostDto } from './dtos/create-post.dto';
 import { PostsService } from './posts.service';
 import { UpdatePostDto } from './dtos/update-post.dto';
+
+import { AuthGuard } from 'src/auth/auth.guard';
+import { CustomRequest } from 'src/auth/customRequest';
 
 @Controller('posts')
 export class PostsController {
@@ -17,7 +22,6 @@ export class PostsController {
 
   @Get()
   findAll() {
-    console.log('This api endpoint returns all posts');
     return this.postsService.findAllPosts();
   }
 
@@ -26,6 +30,7 @@ export class PostsController {
     return this.postsService.getPost(parseInt(id));
   }
 
+  @UseGuards(AuthGuard)
   @Post()
   createPost(@Body() body: CreatePostDto) {
     return this.postsService.createPost(
@@ -35,14 +40,19 @@ export class PostsController {
     );
   }
 
+  @UseGuards(AuthGuard)
   @Patch(`:id`)
-  updatePost(@Param('id') id: string, @Body() body: UpdatePostDto) {
-    return this.postsService.updatePost(parseInt(id), body);
+  updatePost(
+    @Param('id') id: string,
+    @Body() body: UpdatePostDto,
+    @Req() req: CustomRequest,
+  ) {
+    return this.postsService.updatePost(parseInt(id), body, req);
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
-  deletePost(@Param('id') id: string) {
-    'This api endpoint deletes a post';
-    return this.postsService.deletePost(parseInt(id));
+  deletePost(@Param('id') id: string, @Req() req: CustomRequest) {
+    return this.postsService.deletePost(parseInt(id), req);
   }
 }
