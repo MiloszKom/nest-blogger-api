@@ -1,7 +1,15 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
+import { randomBytes, scrypt as _scrypt } from 'crypto';
+import { promisify } from 'util';
+
+const scrypt = promisify(_scrypt);
 
 @Injectable()
 export class AuthService {
@@ -17,12 +25,17 @@ export class AuthService {
     passConfirm: string,
     res: Response,
   ) {
-    const user = await this.usersService.createUser(
-      username,
-      email,
-      pass,
-      passConfirm,
-    );
+    if (pass !== passConfirm) {
+      throw new BadRequestException('Passwords do not match');
+    }
+
+    const salt = randomBytes(8).toString('hex');
+
+    const hash = (await scrypt(pass, salt, 32)) as Buffer;
+
+    const result = salt + '.' + hash.toString('hex');
+
+    const user = await this.usersService.createUser(username, email, result);
 
     const payload = { sub: user.id, username: user.username };
     const token = await this.jwtService.signAsync(payload);
@@ -39,8 +52,13 @@ export class AuthService {
 
   async login(email: string, pass: string, res: Response) {
     const user = await this.usersService.findByEmail(email);
-    if (!user || user.password !== pass) {
-      throw new UnauthorizedException();
+
+    const [salt, storedHash] = user.password.split('.');
+
+    const hash = (await scrypt(pass, salt, 32)) as Buffer;
+
+    if (storedHash !== hash.toString('hex')) {
+      throw new UnauthorizedException('Email or password is incorrect');
     }
 
     const payload = { sub: user.id, username: user.username };
