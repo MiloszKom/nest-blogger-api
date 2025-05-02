@@ -10,8 +10,19 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signup(username: string, email: string, pass: string, res: Response) {
-    const user = await this.usersService.createUser(username, email, pass);
+  async signup(
+    username: string,
+    email: string,
+    pass: string,
+    passConfirm: string,
+    res: Response,
+  ) {
+    const user = await this.usersService.createUser(
+      username,
+      email,
+      pass,
+      passConfirm,
+    );
 
     const payload = { sub: user.id, username: user.username };
     const token = await this.jwtService.signAsync(payload);

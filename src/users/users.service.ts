@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
@@ -22,7 +26,16 @@ export class UsersService {
     return user;
   }
 
-  createUser(username: string, email: string, password: string) {
+  createUser(
+    username: string,
+    email: string,
+    password: string,
+    passwordConfirm,
+  ) {
+    if (password !== passwordConfirm) {
+      throw new BadRequestException('Passwords do not match');
+    }
+
     const user = this.usersRepository.create({ username, email, password });
     return this.usersRepository.save(user);
   }
