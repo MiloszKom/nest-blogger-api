@@ -31,8 +31,12 @@ export class PostsService {
     return this.findPostById(id);
   }
 
-  createPost(title: string, content: string, authorId: number) {
-    const newPost = this.postsRepository.create({ title, content, authorId });
+  createPost(title: string, content: string, req: CustomRequest) {
+    const newPost = this.postsRepository.create({
+      title,
+      content,
+      authorId: req.user.sub,
+    });
     return this.postsRepository.save(newPost);
   }
 

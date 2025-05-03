@@ -32,12 +32,8 @@ export class PostsController {
 
   @UseGuards(AuthGuard)
   @Post()
-  createPost(@Body() body: CreatePostDto) {
-    return this.postsService.createPost(
-      body.title,
-      body.content,
-      body.authorId,
-    );
+  createPost(@Body() body: CreatePostDto, @Req() req: CustomRequest) {
+    return this.postsService.createPost(body.title, body.content, req);
   }
 
   @UseGuards(AuthGuard)
