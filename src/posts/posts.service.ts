@@ -6,7 +6,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './post.entity';
 import { Repository } from 'typeorm';
-import { CustomRequest } from 'src/auth/customRequest';
 
 @Injectable()
 export class PostsService {
@@ -31,27 +30,28 @@ export class PostsService {
     return this.findPostById(id);
   }
 
-  createPost(title: string, content: string, req: CustomRequest) {
+  createPost(title: string, content: string, userId: number) {
     const newPost = this.postsRepository.create({
       title,
       content,
-      authorId: req.user.sub,
+      authorId: userId,
     });
+
     return this.postsRepository.save(newPost);
   }
 
-  async updatePost(id: number, attrs: Partial<Post>, req: CustomRequest) {
+  async updatePost(id: number, attrs: Partial<Post>, userId: number) {
     const post = await this.findPostById(id);
-    if (req.user.sub != post.authorId) {
+    if (userId != post.authorId) {
       throw new ForbiddenException("You can't update other users posts");
     }
     Object.assign(post, attrs);
     return this.postsRepository.save(post);
   }
 
-  async deletePost(id: number, req: CustomRequest) {
+  async deletePost(id: number, userId: number) {
     const post = await this.findPostById(id);
-    if (req.user.sub != post.authorId) {
+    if (userId != post.authorId) {
       throw new ForbiddenException("You can't update other users posts");
     }
     return this.postsRepository.remove(post);
