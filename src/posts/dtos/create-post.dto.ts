@@ -8,6 +8,7 @@ export class CreatePostDto {
   })
   @IsNotEmpty({ message: 'Title cannot be empty!' })
   @IsString()
+  @IsNotEmpty({ message: 'Title must not be empty if provided' })
   title: string;
 
   @ApiProperty({
@@ -17,5 +18,6 @@ export class CreatePostDto {
   })
   @IsNotEmpty({ message: 'Content cannot be empty!' })
   @IsString()
+  @IsNotEmpty({ message: 'Content must not be empty if provided' })
   content: string;
 }

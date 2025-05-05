@@ -16,19 +16,39 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: `.env.${process.env.NODE_ENV === 'production' ? 'prod' : 'dev'}`,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('DATABASE_HOST'),
-        port: 5432,
-        username: 'postgres',
-        password: 'postgres',
-        database: 'test',
-        entities: [Post, User],
-        synchronize: true,
-      }),
+      useFactory: async (configService: ConfigService) => {
+        // console.log('DB Environment Variables:', {
+        //   DB_HOST: configService.get('DB_HOST'),
+        //   DB_USERNAME: configService.get('DB_USERNAME'),
+        //   DB_NAME: configService.get('DB_NAME'),
+        //   DB_SYNC: configService.get('DB_SYNC'),
+        //   DB_SSL: configService.get('DB_SSL'),
+        //   NODE_ENV: process.env.NODE_ENV,
+        // });
+
+        return {
+          type: 'postgres',
+          host: configService.get('DB_HOST'),
+          port: 5432,
+          username: configService.get('DB_USERNAME'),
+          password: configService.get('DB_PASSWORD'),
+          database: configService.get('DB_NAME'),
+          entities: [Post, User],
+          synchronize: configService.get('DB_SYNC') === 'true',
+          ...(configService.get('DB_SSL') === 'true' && {
+            ssl: true,
+            extra: {
+              ssl: {
+                rejectUnauthorized: false,
+              },
+            },
+          }),
+        };
+      },
       inject: [ConfigService],
     }),
   ],

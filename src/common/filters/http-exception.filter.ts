@@ -1,4 +1,9 @@
-import { Catch, ArgumentsHost, ConflictException } from '@nestjs/common';
+import {
+  Catch,
+  ArgumentsHost,
+  ConflictException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 import { QueryFailedError } from 'typeorm';
 import { PostgresError } from '../types/postgres-error.interface';
@@ -15,6 +20,11 @@ export class TypeORMExceptionFilter extends BaseExceptionFilter {
         throw new ConflictException('Email already exists');
       }
     }
+
+    if (exception.code === '42P01') {
+      throw new InternalServerErrorException('Database table missing');
+    }
+
     super.catch(exception, host);
   }
 }
