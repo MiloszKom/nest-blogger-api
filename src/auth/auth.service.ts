@@ -51,6 +51,7 @@ export class AuthService {
   }
 
   async login(email: string, pass: string, res: Response) {
+    console.log('Checking if Render will automatically update the code');
     const user = await this.usersService.findByEmail(email);
 
     const [salt, storedHash] = user.password.split('.');
