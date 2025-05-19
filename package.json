@@ -13,7 +13,7 @@
     "start:prod:watch": "cross-env NODE_ENV=production nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "docker:dev": "docker compose --profile dev up --build",
+    "docker:dev": "docker compose --profile dev up -d",
     "docker:prod": "docker compose --profile prod up --build",
     "docker:dev:down": "docker compose --profile dev down",
     "docker:prod:down": "docker compose --profile prod down",
