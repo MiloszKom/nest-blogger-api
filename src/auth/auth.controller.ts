@@ -8,38 +8,64 @@ import {
   Res,
 } from '@nestjs/common';
 
+import { Serialize } from 'src/interceptors/serialize.interceptor';
+
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 
 import { LoginDto } from './dtos/login.dto';
 import { SignupDto } from './dtos/signup.dto';
+import { UserDto } from 'src/users/dtos/user.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Serialize(UserDto)
   @Post('signup')
-  signup(@Body() body: SignupDto, @Res({ passthrough: true }) res: Response) {
-    return this.authService.signup(
+  async signup(
+    @Body() body: SignupDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const newUser = await this.authService.signup(
       body.username,
       body.email,
       body.password,
       body.passwordConfirm,
       res,
     );
+
+    return {
+      statusCode: 201,
+      message: 'Signed up successfully',
+      data: newUser,
+    };
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  login(@Body() body: LoginDto, @Res({ passthrough: true }) res: Response) {
-    return this.authService.login(body.email, body.password, res);
+  async login(
+    @Body() body: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    await this.authService.login(body.email, body.password, res);
+
+    return {
+      statusCode: 200,
+      message: 'Logged in successfully',
+    };
   }
 
   @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('logout')
   logout(@Res({ passthrough: true }) res: Response) {
-    return this.authService.logout(res);
+    this.authService.logout(res);
+
+    return {
+      statusCode: 200,
+      message: 'Logged out successfully',
+    };
   }
 }

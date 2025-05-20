@@ -21,34 +21,68 @@ export class PostsController {
   constructor(private postsService: PostsService) {}
 
   @Get()
-  findAll() {
-    return this.postsService.findAllPosts();
+  async findAll() {
+    const posts = await this.postsService.findAllPosts();
+    return {
+      statusCode: 200,
+      message: 'Posts fetched successfully',
+      data: posts,
+    };
   }
 
   @Get(`:id`)
-  findOne(@Param('id') id: string) {
-    return this.postsService.getPost(parseInt(id));
+  async findOne(@Param('id') id: string) {
+    const post = await this.postsService.getPost(parseInt(id));
+    return {
+      statusCode: 200,
+      message: 'Post fetched successfully',
+      data: post,
+    };
   }
 
   @UseGuards(AuthGuard)
   @Post()
-  createPost(@Body() body: CreatePostDto, @Req() req: CustomRequest) {
-    return this.postsService.createPost(body.title, body.content, req.user.sub);
+  async createPost(@Body() body: CreatePostDto, @Req() req: CustomRequest) {
+    const newPost = await this.postsService.createPost(
+      body.title,
+      body.content,
+      req.user.sub,
+    );
+    return {
+      statusCode: 201,
+      message: 'Post created successfully',
+      data: newPost,
+    };
   }
 
   @UseGuards(AuthGuard)
   @Patch(`:id`)
-  updatePost(
+  async updatePost(
     @Param('id') id: string,
     @Body() body: UpdatePostDto,
     @Req() req: CustomRequest,
   ) {
-    return this.postsService.updatePost(parseInt(id), body, req.user.sub);
+    const updatedPost = await this.postsService.updatePost(
+      parseInt(id),
+      body,
+      req.user.sub,
+    );
+
+    return {
+      statusCode: 200,
+      message: 'Post updated successfully',
+      data: updatedPost,
+    };
   }
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  deletePost(@Param('id') id: string, @Req() req: CustomRequest) {
-    return this.postsService.deletePost(parseInt(id), req.user.sub);
+  async deletePost(@Param('id') id: string, @Req() req: CustomRequest) {
+    await this.postsService.deletePost(parseInt(id), req.user.sub);
+
+    return {
+      statusCode: 200,
+      message: 'Post deleted successfully',
+    };
   }
 }

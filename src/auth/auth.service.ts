@@ -47,7 +47,7 @@ export class AuthService {
       maxAge: 1000 * 60 * 60 * 24,
     });
 
-    return { message: 'Signed up successfully' };
+    return user;
   }
 
   async login(email: string, pass: string, res: Response) {
@@ -70,8 +70,6 @@ export class AuthService {
       sameSite: 'lax',
       maxAge: 1000 * 60 * 60 * 24,
     });
-
-    return { message: 'Logged in successfully' };
   }
 
   logout(res: Response) {
@@ -80,7 +78,5 @@ export class AuthService {
       secure: false,
       sameSite: 'lax',
     });
-
-    return { message: 'Logged out successfully' };
   }
 }

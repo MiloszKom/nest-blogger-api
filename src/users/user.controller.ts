@@ -9,7 +9,12 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async findAll() {
+    const users = await this.usersService.findAll();
+    return {
+      statusCode: 200,
+      message: 'Users fetched successfully',
+      data: users,
+    };
   }
 }

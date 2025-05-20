@@ -12,13 +12,13 @@ export class Post {
   id: number;
 
   @Column()
+  authorId: number;
+
+  @Column()
   title: string;
 
   @Column()
   content: string;
-
-  @Column()
-  authorId: number;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
