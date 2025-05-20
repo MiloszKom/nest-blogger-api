@@ -32,11 +32,11 @@ import { AuthModule } from './auth/auth.module';
 
         return {
           type: 'postgres',
-          host: configService.get('DB_HOST'),
+          host: configService.get('DB_HOST') ?? 'postgres',
           port: 5432,
-          username: configService.get('DB_USERNAME'),
-          password: configService.get('DB_PASSWORD'),
-          database: configService.get('DB_NAME'),
+          username: configService.get('DB_USERNAME') ?? 'postgres',
+          password: configService.get('DB_PASSWORD') ?? 'postgres',
+          database: configService.get('DB_NAME') ?? 'test',
           entities: [Post, User],
           synchronize: configService.get('DB_SYNC') === 'true',
           ...(configService.get('DB_SSL') === 'true' && {
