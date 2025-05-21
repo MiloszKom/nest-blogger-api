@@ -41,21 +41,23 @@ describe('PostController (e2e)', () => {
   });
 
   it('GET /posts - returns all posts', () => {
-    return request(app.getHttpServer())
-      .get('/posts')
-      .expect(200)
-      .expect(mockPosts);
+    return request(app.getHttpServer()).get('/posts').expect({
+      statusCode: 200,
+      message: 'Posts fetched successfully',
+      data: mockPosts,
+    });
   });
 
   it('GET /posts/2 - returns a post by ID', () => {
-    return request(app.getHttpServer())
-      .get('/posts/2')
-      .expect(200)
-      .expect(mockPosts[1]);
+    return request(app.getHttpServer()).get('/posts/2').expect({
+      statusCode: 200,
+      message: 'Post fetched successfully',
+      data: mockPosts[1],
+    });
   });
 
   it('GET /posts/99 - returns 404 when post is not found', () => {
-    return request(app.getHttpServer()).get('/posts/99').expect(404).expect({
+    return request(app.getHttpServer()).get('/posts/99').expect({
       statusCode: 404,
       message: 'Post not found',
       error: 'Not Found',

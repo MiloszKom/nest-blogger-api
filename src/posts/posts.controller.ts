@@ -9,6 +9,8 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
+import { ApiOperation } from '@nestjs/swagger';
+
 import { CreatePostDto } from './dtos/create-post.dto';
 import { PostsService } from './posts.service';
 import { UpdatePostDto } from './dtos/update-post.dto';
@@ -20,6 +22,10 @@ import { CustomRequest } from 'src/auth/customRequest';
 export class PostsController {
   constructor(private postsService: PostsService) {}
 
+  @ApiOperation({
+    summary: 'Get all posts.',
+    description: 'Returns a list of all published posts',
+  })
   @Get()
   async findAll() {
     const posts = await this.postsService.findAllPosts();
@@ -30,6 +36,11 @@ export class PostsController {
     };
   }
 
+  @ApiOperation({
+    summary: 'Get post by ID',
+    description:
+      'Returns full details of a specific post including author information',
+  })
   @Get(`:id`)
   async findOne(@Param('id') id: string) {
     const post = await this.postsService.getPost(parseInt(id));
@@ -40,6 +51,11 @@ export class PostsController {
     };
   }
 
+  @ApiOperation({
+    summary: 'Create new post',
+    description:
+      'Creates a new post. Requires authentication and valid post data',
+  })
   @UseGuards(AuthGuard)
   @Post()
   async createPost(@Body() body: CreatePostDto, @Req() req: CustomRequest) {
@@ -55,6 +71,11 @@ export class PostsController {
     };
   }
 
+  @ApiOperation({
+    summary: 'Update post content',
+    description:
+      'Modifies an existing post. Only the post author can make changes',
+  })
   @UseGuards(AuthGuard)
   @Patch(`:id`)
   async updatePost(
@@ -67,7 +88,6 @@ export class PostsController {
       body,
       req.user.sub,
     );
-
     return {
       statusCode: 200,
       message: 'Post updated successfully',
@@ -75,11 +95,14 @@ export class PostsController {
     };
   }
 
+  @ApiOperation({
+    summary: 'Delete post',
+    description: 'Permanently removes a post. Requires post author privileges',
+  })
   @UseGuards(AuthGuard)
   @Delete(':id')
   async deletePost(@Param('id') id: string, @Req() req: CustomRequest) {
     await this.postsService.deletePost(parseInt(id), req.user.sub);
-
     return {
       statusCode: 200,
       message: 'Post deleted successfully',

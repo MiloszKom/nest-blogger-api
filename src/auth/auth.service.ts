@@ -1,6 +1,8 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
@@ -29,6 +31,17 @@ export class AuthService {
       throw new BadRequestException('Passwords do not match');
     }
 
+    const existingEmailUser = await this.usersService.findByEmail(email);
+    if (existingEmailUser) {
+      throw new ConflictException('Email already taken');
+    }
+
+    const existingUsernameUser =
+      await this.usersService.findByUsername(username);
+    if (existingUsernameUser) {
+      throw new ConflictException('Username already taken');
+    }
+
     const salt = randomBytes(8).toString('hex');
 
     const hash = (await scrypt(pass, salt, 32)) as Buffer;
@@ -46,12 +59,14 @@ export class AuthService {
       sameSite: 'lax',
       maxAge: 1000 * 60 * 60 * 24,
     });
-
-    return user;
   }
 
   async login(email: string, pass: string, res: Response) {
     const user = await this.usersService.findByEmail(email);
+
+    if (!user) {
+      throw new UnauthorizedException('Email or password is incorrect');
+    }
 
     const [salt, storedHash] = user.password.split('.');
 

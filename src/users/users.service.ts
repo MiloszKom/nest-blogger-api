@@ -15,11 +15,11 @@ export class UsersService {
   }
 
   async findByEmail(email: string) {
-    const user = await this.usersRepository.findOne({ where: { email } });
-    if (!user) {
-      throw new NotFoundException('This user doesnt exist');
-    }
-    return user;
+    return this.usersRepository.findOne({ where: { email } });
+  }
+
+  async findByUsername(username: string) {
+    return this.usersRepository.findOne({ where: { username } });
   }
 
   createUser(username: string, email: string, password: string) {

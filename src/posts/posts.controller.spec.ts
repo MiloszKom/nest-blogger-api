@@ -54,7 +54,7 @@ describe('PostsController', () => {
 
     const result = await controller.createPost(postData, mockRequest);
 
-    expect(result).toEqual({
+    expect(result.data).toEqual({
       id: expect.any(Number),
       title: postData.title,
       content: postData.content,
@@ -69,6 +69,4 @@ describe('PostsController', () => {
       mockRequest.user.sub,
     );
   });
-
-  // To Do: Test updating and deleting posts
 });
