@@ -1,4 +1,5 @@
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
+import { PostDto } from '../../posts/dtos/post.dto';
 
 export class UserDto {
   @Expose()
@@ -9,4 +10,8 @@ export class UserDto {
 
   @Expose()
   email: string;
+
+  @Expose()
+  @Type(() => PostDto)
+  posts: PostDto[];
 }

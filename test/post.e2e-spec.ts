@@ -11,9 +11,9 @@ describe('PostController (e2e)', () => {
   let app: INestApplication<App>;
 
   const mockPosts = [
-    { id: 1, title: 'PostTitle1', content: 'PostContent1', authorId: 1 },
-    { id: 2, title: 'PostTitle2', content: 'PostContent2', authorId: 2 },
-    { id: 3, title: 'PostTitle3', content: 'PostContent3', authorId: 3 },
+    { id: 1, title: 'PostTitle1', content: 'PostContent1', author: { id: 1 } },
+    { id: 2, title: 'PostTitle2', content: 'PostContent2', author: { id: 2 } },
+    { id: 3, title: 'PostTitle3', content: 'PostContent3', author: { id: 3 } },
   ];
 
   const mockPostsRepository = {

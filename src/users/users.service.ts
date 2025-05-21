@@ -26,4 +26,17 @@ export class UsersService {
     const user = this.usersRepository.create({ username, email, password });
     return this.usersRepository.save(user);
   }
+
+  async findUser(id: number) {
+    const userWithPosts = await this.usersRepository.findOne({
+      where: { id },
+      relations: ['posts'],
+    });
+
+    if (!userWithPosts) {
+      throw new NotFoundException('User not found');
+    }
+
+    return userWithPosts;
+  }
 }

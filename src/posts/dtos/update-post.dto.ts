@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdatePostDto {
@@ -7,6 +7,7 @@ export class UpdatePostDto {
     example: 'Updated Title: Mastering TypeScript',
     required: false,
   })
+  @IsNotEmpty({ message: 'Title cannot be empty' })
   @IsString()
   @IsOptional()
   title?: string;

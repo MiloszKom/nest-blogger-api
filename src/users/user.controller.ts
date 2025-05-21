@@ -1,14 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
 import { ApiOperation } from '@nestjs/swagger';
 
-@Serialize(UserDto)
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
+  @Serialize(UserDto)
   @ApiOperation({
     summary: 'Get all users',
     description: 'Returns a list of all users',
@@ -20,6 +20,17 @@ export class UsersController {
       statusCode: 200,
       message: 'Users fetched successfully',
       data: users,
+    };
+  }
+
+  @Serialize(UserDto)
+  @Get(':id')
+  async getUser(@Param('id') id: string) {
+    const user = await this.usersService.findUser(parseInt(id));
+    return {
+      statusCode: 200,
+      message: 'User fetched successfully',
+      data: user,
     };
   }
 }

@@ -45,7 +45,7 @@ describe('PostsService', () => {
       id: expect.any(Number),
       title: postTitle,
       content: postContent,
-      authorId: userId,
+      author: { id: userId },
       createdAt: expect.any(Date),
       updatedAt: expect.any(Date),
     });

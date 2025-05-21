@@ -34,7 +34,7 @@ export class PostsService {
     const newPost = this.postsRepository.create({
       title,
       content,
-      authorId: userId,
+      author: { id: userId },
     });
 
     return this.postsRepository.save(newPost);
@@ -42,7 +42,7 @@ export class PostsService {
 
   async updatePost(id: number, attrs: Partial<Post>, userId: number) {
     const post = await this.findPostById(id);
-    if (userId != post.authorId) {
+    if (userId != post.author.id) {
       throw new ForbiddenException("You can't update other users posts");
     }
     Object.assign(post, attrs);
@@ -51,7 +51,7 @@ export class PostsService {
 
   async deletePost(id: number, userId: number) {
     const post = await this.findPostById(id);
-    if (userId != post.authorId) {
+    if (userId != post.author.id) {
       throw new ForbiddenException("You can't update other users posts");
     }
     return this.postsRepository.remove(post);
