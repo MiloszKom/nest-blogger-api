@@ -17,7 +17,7 @@ This project is a RESTfull blog API backend build with Nest.js. The project incl
 #### **1. Clone the repository**
 ```bash
 git clone https://github.com/MiloszKom/nest-blogger-api.git
-cd nestjs-blogger-api
+cd nest-blogger-api
 ```
 
 #### **2. Build and start the containers**
