@@ -63,93 +63,103 @@ describe('AuthController (e2e)', () => {
     await app.init();
   });
 
-  it('POST /auth/login - Logs the user in', () => {
-    return request(app.getHttpServer())
-      .post('/auth/login')
-      .send({
-        email: 'user@mail1.com',
-        password: 'HashedPassword',
-      })
-      .expect({
-        statusCode: 200,
-        message: 'Logged in successfully',
-      });
+  describe('POST /auth/login', () => {
+    it('should log the user in with valid credentials', () => {
+      return request(app.getHttpServer())
+        .post('/auth/login')
+        .send({
+          email: 'user@mail1.com',
+          password: 'HashedPassword',
+        })
+        .expect(200)
+        .expect({
+          statusCode: 200,
+          message: 'Logged in successfully',
+        });
+    });
+
+    it('should return 401 for invalid credentials', () => {
+      return request(app.getHttpServer())
+        .post('/auth/login')
+        .send({
+          email: 'nonexistent@mail.com',
+          password: 'wrong_password',
+        })
+        .expect(401)
+        .expect({
+          message: 'Email or password is incorrect',
+          error: 'Unauthorized',
+          statusCode: 401,
+        });
+    });
   });
 
-  it('POST /auth/login - Returns 401 Unauthrorized when the user provides wrong login credentails', () => {
-    return request(app.getHttpServer())
-      .post('/auth/login')
-      .send({
-        email: 'wrong@mail.com',
-        password: 'PasswordAlsoWrong',
-      })
-      .expect({
-        message: 'Email or password is incorrect',
-        error: 'Unauthorized',
-        statusCode: 401,
-      });
-  });
+  describe('POST /auth/signup', () => {
+    it('should sign up a new user', () => {
+      return request(app.getHttpServer())
+        .post('/auth/signup')
+        .send({
+          username: 'newuser',
+          email: 'new@mail.com',
+          password: 'valid_password',
+          passwordConfirm: 'valid_password',
+        })
+        .expect(201)
+        .expect({
+          statusCode: 201,
+          message: 'Signed up successfully',
+        });
+    });
 
-  it('POST /auth/signup - Signs up the user', () => {
-    return request(app.getHttpServer())
-      .post('/auth/signup')
-      .send({
-        username: 'user2',
-        email: 'user@mail2.com',
-        password: 'HashedPassword2',
-        passwordConfirm: 'HashedPassword2',
-      })
-      .expect({
-        statusCode: 201,
-        message: 'Signed up successfully',
-      });
-  });
+    it('should return 400 if passwords do not match', () => {
+      return request(app.getHttpServer())
+        .post('/auth/signup')
+        .send({
+          username: 'user2',
+          email: 'user2@mail.com',
+          password: 'password123',
+          passwordConfirm: 'different_password',
+        })
+        .expect(400)
+        .expect({
+          message: 'Passwords do not match',
+          error: 'Bad Request',
+          statusCode: 400,
+        });
+    });
 
-  it('POST /auth/signup - Returns 400 Bad Request when password and confirmation do not matchs', () => {
-    return request(app.getHttpServer())
-      .post('/auth/signup')
-      .send({
-        username: 'user2',
-        email: 'user@mail2.com',
-        password: 'HashedPassword2',
-        passwordConfirm: 'SomeDiffrientPassoword',
-      })
-      .expect({
-        message: 'Passwords do not match',
-        error: 'Bad Request',
-        statusCode: 400,
-      });
-  });
+    it('should return 409 if email is already taken', () => {
+      return request(app.getHttpServer())
+        .post('/auth/signup')
+        .send({
+          username: 'user2',
+          email: 'user@mail1.com',
+          password: 'password',
+          passwordConfirm: 'password',
+        })
+        .expect(409)
+        .expect({
+          message: 'Email already taken',
+          error: 'Conflict',
+          statusCode: 409,
+        });
+    });
 
-  it('POST /auth/signup - Returns 409 Conflict when email already existss', () => {
-    return request(app.getHttpServer())
-      .post('/auth/signup')
-      .send({
-        username: 'user3',
-        email: 'user@mail2.com',
-        password: 'password',
-        passwordConfirm: 'password',
-      })
-      .expect({
-        message: 'Email already taken',
-        error: 'Conflict',
-        statusCode: 409,
-      });
-  });
-
-  it('POST /auth/signup - Returns 409 Conflict when username already existss', () => {
-    return request(app.getHttpServer())
-      .post('/auth/signup')
-      .send({
-        username: 'user2',
-        email: 'user@mail3.com',
-        password: 'password',
-        passwordConfirm: 'password',
-      })
-      .expect({
-        message: 'Username already taken',
-        error: 'Conflict',
-        statusCode: 409,
-      });
+    it('should return 409 if username is already taken', () => {
+      return request(app.getHttpServer())
+        .post('/auth/signup')
+        .send({
+          username: 'user1',
+          email: 'unique@mail.com',
+          password: 'password',
+          passwordConfirm: 'password',
+        })
+        .expect(409)
+        .expect({
+          message: 'Username already taken',
+          error: 'Conflict',
+          statusCode: 409,
+        });
+    });
   });
 });

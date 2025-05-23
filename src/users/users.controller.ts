@@ -3,6 +3,7 @@ import { UsersService } from './users.service';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
 import { ApiOperation } from '@nestjs/swagger';
+import { UserDetailDto } from './dtos/user-detail.dto';
 
 @Controller('users')
 export class UsersController {
@@ -23,7 +24,11 @@ export class UsersController {
     };
   }
 
-  @Serialize(UserDto)
+  @Serialize(UserDetailDto)
+  @ApiOperation({
+    summary: 'Get user by ID',
+    description: 'Retrieves a user along with all their associated posts.',
+  })
   @Get(':id')
   async getUser(@Param('id') id: string) {
     const user = await this.usersService.findUser(parseInt(id));

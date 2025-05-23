@@ -6,6 +6,7 @@ import { Post } from './post.entity';
 describe('PostsService', () => {
   let service: PostsService;
 
+  // Static mocking
   const mockPostsRepository = {
     create: jest.fn().mockImplementation((data) => data),
     save: jest.fn().mockImplementation((user) =>
