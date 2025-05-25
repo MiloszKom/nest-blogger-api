@@ -8,6 +8,7 @@ import {
   Param,
   UseGuards,
   Req,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 
@@ -41,9 +42,9 @@ export class PostsController {
     description:
       'Returns full details of a specific post including author information',
   })
-  @Get(`:id`)
-  async findOne(@Param('id') id: string) {
-    const post = await this.postsService.getPost(parseInt(id));
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const post = await this.postsService.getPost(id);
     return {
       statusCode: 200,
       message: 'Post fetched successfully',
@@ -101,8 +102,11 @@ export class PostsController {
   })
   @UseGuards(AuthGuard)
   @Delete(':id')
-  async deletePost(@Param('id') id: string, @Req() req: CustomRequest) {
-    await this.postsService.deletePost(parseInt(id), req.user.sub);
+  async deletePost(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: CustomRequest,
+  ) {
+    await this.postsService.deletePost(id, req.user.sub);
     return {
       statusCode: 200,
       message: 'Post deleted successfully',

@@ -1,5 +1,4 @@
 import { Expose } from 'class-transformer';
-
 export class PostDto {
   @Expose()
   id: number;

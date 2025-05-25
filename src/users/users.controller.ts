@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
@@ -30,8 +30,8 @@ export class UsersController {
     description: 'Retrieves a user along with all their associated posts.',
   })
   @Get(':id')
-  async getUser(@Param('id') id: string) {
-    const user = await this.usersService.findUser(parseInt(id));
+  async getUser(@Param('id', ParseIntPipe) id: number) {
+    const user = await this.usersService.findUser(id);
     return {
       statusCode: 200,
       message: 'User fetched successfully',
