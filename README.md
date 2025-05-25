@@ -20,21 +20,22 @@ git clone https://github.com/MiloszKom/nest-blogger-api.git
 cd nest-blogger-api
 ```
 
-#### **2. Build and start the containers**
+#### **2. Create an .env.dev file in the root of the project**
+
+#### **3. Build and start the containers**
 In the root directory type:
 ```bash
 npm run docker:dev
 ```
 
-#### **3. Access the API**
+#### **4. Access the API**
 Once the containers are running, open your browser or API client and navigate to:
 ```bash
 http://localhost:3000
 ```
 
 **Note:**
-The server is configured to run with default settings and does not require a .env file to start.
-However, if you want to customize environment variables, feel free to create a .env.dev file in the root directory, these following values are the default:
+The server is configured to run with default environment settings. Although it does not require any specific variables to be defined, it does require a .env.dev file to exist in the root directory. This file can be empty unless you want to override the default values listed below:
 ```bash
 NODE_ENV=development
 
